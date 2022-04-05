@@ -23,6 +23,7 @@ namespace Nekoyume
             if (itemRow is null ||
                 !(itemRow is MaterialItemSheet.Row materialRow))
             {
+                tradableId = new Guid();
                 return false;
             }
 

@@ -12,6 +12,7 @@ using UnityEngine.UI;
 
 namespace Nekoyume.UI.Module
 {
+    using UniRx;
     public class BattleReward : MonoBehaviour
     {
         public int index;

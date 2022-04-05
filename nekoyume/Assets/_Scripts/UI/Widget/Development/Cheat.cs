@@ -30,6 +30,7 @@ using Text = UnityEngine.UI.Text;
 
 namespace Nekoyume
 {
+    using UniRx;
     public class Cheat : Widget
     {
         private static Cheat Instance;
