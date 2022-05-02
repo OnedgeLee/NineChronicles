@@ -746,10 +746,12 @@ namespace Nekoyume.BlockChain
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
         public IObservable<ActionBase.ActionEvaluation<CreateTestbed>> CreateTestbed()
         {
+            var (sessionIndex, _) = WeeklyArenaState.GetSessionIndex(
+                Game.Game.instance.Agent.BlockIndex,
+                States.Instance.GameConfigState.WeeklyArenaInterval);
             var action = new CreateTestbed
             {
-                weeklyArenaAddress = WeeklyArenaState.DeriveAddress(
-                    (int)Game.Game.instance.Agent.BlockIndex / States.Instance.GameConfigState.WeeklyArenaInterval)
+                weeklyArenaAddress = WeeklyArenaState.DeriveAddress(sessionIndex),
             };
             ProcessAction(action);
             return _agent.ActionRenderer.EveryRender<CreateTestbed>()

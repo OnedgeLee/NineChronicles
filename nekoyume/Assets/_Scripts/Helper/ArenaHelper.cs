@@ -18,13 +18,15 @@ namespace Nekoyume
         public static bool TryGetThisWeekAddress(long blockIndex, out Address weeklyArenaAddress)
         {
             var gameConfigState = States.Instance.GameConfigState;
-            var index = (int) blockIndex / gameConfigState.WeeklyArenaInterval;
-            if (index < 0)
+            // var index = (int) blockIndex / gameConfigState.WeeklyArenaInterval;
+            var (sessionIndex, _) =
+                WeeklyArenaState.GetSessionIndex(blockIndex, gameConfigState.WeeklyArenaInterval);
+            if (sessionIndex < 0)
             {
                 return false;
             }
 
-            weeklyArenaAddress = WeeklyArenaState.DeriveAddress(index);
+            weeklyArenaAddress = WeeklyArenaState.DeriveAddress(sessionIndex);
             return true;
         }
 
@@ -52,17 +54,21 @@ namespace Nekoyume
         public static Address GetPrevWeekAddress(long thisWeekBlockIndex)
         {
             var gameConfigState = States.Instance.GameConfigState;
-            var index = Math.Max((int) thisWeekBlockIndex / gameConfigState.WeeklyArenaInterval, 0);
-            index--;
-            return WeeklyArenaState.DeriveAddress(index);
+            // var index = Math.Max((int) thisWeekBlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var (sessionIndex, _) =
+                WeeklyArenaState.GetSessionIndex(thisWeekBlockIndex, gameConfigState.WeeklyArenaInterval);
+            sessionIndex--;
+            return WeeklyArenaState.DeriveAddress(sessionIndex);
         }
 
         public static Address GetNextWeekAddress(long blockIndex)
         {
             var gameConfigState = States.Instance.GameConfigState;
-            var index = (int) blockIndex / gameConfigState.WeeklyArenaInterval;
-            index++;
-            return WeeklyArenaState.DeriveAddress(index);
+            // var index = (int) blockIndex / gameConfigState.WeeklyArenaInterval;
+            var (sessionIndex, _) =
+                WeeklyArenaState.GetSessionIndex(blockIndex, gameConfigState.WeeklyArenaInterval);
+            sessionIndex++;
+            return WeeklyArenaState.DeriveAddress(sessionIndex);
         }
     }
 }

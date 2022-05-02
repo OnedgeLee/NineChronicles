@@ -99,8 +99,10 @@ namespace Nekoyume.UI
                     await UniTask.Run(async () =>
                     {
                         var gameConfigState = States.Instance.GameConfigState;
-                        var weeklyArenaIndex = (int)agent.BlockIndex / gameConfigState.WeeklyArenaInterval;
-                        var weeklyArenaAddress = WeeklyArenaState.DeriveAddress(weeklyArenaIndex);
+                        // var weeklyArenaIndex = (int)agent.BlockIndex / gameConfigState.WeeklyArenaInterval;
+                        var (sessionIndex, _) =
+                            WeeklyArenaState.GetSessionIndex(agent.BlockIndex, gameConfigState.WeeklyArenaInterval);
+                        var weeklyArenaAddress = WeeklyArenaState.DeriveAddress(sessionIndex);
                         weeklyArenaState =
                             new WeeklyArenaState((Bencodex.Types.Dictionary) await agent.GetStateAsync(weeklyArenaAddress));
                         States.Instance.SetWeeklyArenaState(weeklyArenaState);
