@@ -55,7 +55,7 @@ namespace Nekoyume.Game
         public BuffSheet BuffSheet { get; private set; }
 
         public ItemSheet ItemSheet { get; private set; }
-        
+
         public ItemRequirementSheet ItemRequirementSheet { get; private set; }
 
         public ConsumableItemSheet ConsumableItemSheet { get; private set; }
@@ -135,8 +135,9 @@ namespace Nekoyume.Game
         public MonsterCollectionSheet MonsterCollectionSheet { get; private set; }
 
         public MonsterCollectionRewardSheet MonsterCollectionRewardSheet { get; private set; }
-
         public SweepRequiredCPSheet SweepRequiredCPSheet { get; private set; }
+
+        public ArenaSheet ArenaSheet { get; private set; }
 
         public void ItemSheetInitialize()
         {

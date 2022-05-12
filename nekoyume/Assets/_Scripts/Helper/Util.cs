@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bencodex.Types;
 using Cysharp.Threading.Tasks;
 using Lib9c.Model.Order;
+using Libplanet;
 using Nekoyume.Extensions;
 using Nekoyume.Game.Character;
 using Nekoyume.Game.Factory;
@@ -337,5 +338,36 @@ namespace Nekoyume.Helper
             var eDt = DateTime.ParseExact(end, "yyyy/MM/dd HH:mm:ss", null);
             return now.IsInTime(bDt, eDt);
         }
+
+        public static async Task<ArenaState> GetArenaState(long index)
+        {
+            var address = ArenaState.DeriveAddress(index);
+            return await UniTask.Run(async () =>
+            {
+                var state = await Game.Game.instance.Agent.GetStateAsync(address);
+                if (state is List list)
+                {
+                    return new ArenaState(list);
+                }
+
+                return null;
+            });
+        }
+
+        public static async Task<ArenaAvatarState> GetArenaAvatarState(Address avatarAddress)
+        {
+            var address = ArenaAvatarState.DeriveAddress(avatarAddress);
+            return await UniTask.Run(async () =>
+            {
+                var state = await Game.Game.instance.Agent.GetStateAsync(address);
+                if (state is List list)
+                {
+                    return new ArenaAvatarState(list);
+                }
+
+                return null;
+            });
+        }
+
     }
 }

@@ -98,6 +98,9 @@ namespace Nekoyume.BlockChain
             MimisbrunnrBattle();
             HackAndSlashSweep();
 
+            //Arena
+            JoinArena();
+
             // Craft
             CombinationConsumable();
             CombinationEquipment();
@@ -306,6 +309,15 @@ namespace Nekoyume.BlockChain
                 .Where(ValidateEvaluationForCurrentAgent)
                 .ObserveOnMainThread()
                 .Subscribe(ResponseHackAndSlashSweep)
+                .AddTo(_disposables);
+        }
+
+        private void JoinArena()
+        {
+            _actionRenderer.EveryRender<JoinArena>()
+                .Where(ValidateEvaluationForCurrentAgent)
+                .ObserveOnMainThread()
+                .Subscribe(ResponseJoinArena)
                 .AddTo(_disposables);
         }
 
@@ -915,7 +927,7 @@ namespace Nekoyume.BlockChain
             if (eval.Exception is null)
             {
                 Widget.Find<SweepResultPopup>().OnActionRender(new LocalRandom(eval.RandomSeed));
-                
+
                 if (eval.Action.apStoneCount > 0)
                 {
                     var avatarAddress = eval.Action.avatarAddress;
@@ -930,6 +942,19 @@ namespace Nekoyume.BlockChain
             else
             {
                 Widget.Find<SweepResultPopup>().Close();
+                Game.Game.BackToMain(false, eval.Exception.InnerException).Forget();
+            }
+        }
+
+        private void ResponseJoinArena(ActionBase.ActionEvaluation<JoinArena> eval)
+        {
+            if (eval.Exception is null)
+            {
+                Debug.Log("ResponseJoinArena");
+                // UpdateCurrentAvatarStateAsync().Forget();
+            }
+            else
+            {
                 Game.Game.BackToMain(false, eval.Exception.InnerException).Forget();
             }
         }

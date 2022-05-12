@@ -38,6 +38,8 @@ namespace Nekoyume.State
 
         public AvatarState CurrentAvatarState { get; private set; }
 
+        public ArenaAvatarState CurrentArenaAvatarState { get; private set; }
+
         public GameConfigState GameConfigState { get; private set; }
 
         private readonly Dictionary<int, CombinationSlotState> _combinationSlotStates =
@@ -49,6 +51,11 @@ namespace Nekoyume.State
         }
 
         #region Setter
+
+        public void SetArenaAvatarState(ArenaAvatarState state)
+        {
+            CurrentArenaAvatarState = state;
+        }
 
         public void SetWeeklyArenaState(WeeklyArenaState state)
         {

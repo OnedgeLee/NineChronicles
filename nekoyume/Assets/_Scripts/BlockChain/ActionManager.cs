@@ -312,6 +312,37 @@ namespace Nekoyume.BlockChain
                 .DoOnError(e => HandleException(action.Id, e));
         }
 
+        public IObservable<ActionBase.ActionEvaluation<JoinArena>> JoinArena(List<Guid> costumes, List<Guid> equipments)
+        {
+            var avatarAddress = States.Instance.CurrentAvatarState.address;
+            var action = new JoinArena
+            {
+                avatarAddress = avatarAddress,
+                costumes = costumes,
+                equipments = equipments,
+            };
+
+            action.PayCost(Game.Game.instance.Agent, States.Instance, TableSheets.Instance);
+            ProcessAction(action);
+            _lastBattleActionId = action.Id;
+            return _agent.ActionRenderer.EveryRender<JoinArena>()
+                .SkipWhile(eval => !eval.Action.Id.Equals(action.Id))
+                .First()
+                .ObserveOnMainThread()
+                .Timeout(ActionTimeout)
+                .DoOnError(e =>
+                {
+                    try
+                    {
+                        HandleException(action.Id, e);
+                    }
+                    catch (Exception e2)
+                    {
+                        Game.Game.BackToMain(false, e2).Forget();
+                    }
+                });
+        }
+
         public IObservable<ActionBase.ActionEvaluation<HackAndSlashSweep>> HackAndSlashSweep(
             List<Guid> costumes,
             List<Guid> equipments,

@@ -151,6 +151,23 @@ namespace Nekoyume.BlockChain
                     code = "29";
                     key = "ERROR_NOT_ENOUGH_AVATAR_LEVEL";
                     break;
+
+                // for arena
+                case RoundDoesNotExistException _:
+                    code = "50";
+                    key = "ROUND_DOES_NOT_EXIST";
+                    break;
+
+                case AlreadyEnteredException _:
+                    code = "51";
+                    key = "ALREADY_ENTERED_THE_ARENA";
+                    break;
+
+                case NotEnoughWinException _:
+                    code = "52";
+                    key = "NOT_ENOUGH_WIN_COUNT";
+                    break;
+
             }
 
             Analyzer.Instance.Track(

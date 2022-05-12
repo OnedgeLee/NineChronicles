@@ -343,6 +343,10 @@ namespace Nekoyume.UI
             secondWidgets.Add(Widget.Create<Tutorial>());
             yield return null;
 
+            // for test
+            secondWidgets.Add(Widget.Create<ArenaTestPopup>());
+            yield return null;
+
             Widget last = null;
             foreach (var value in secondWidgets)
             {
@@ -380,5 +384,13 @@ namespace Nekoyume.UI
                 }
             }
         }
+
+         void OnGUI()
+         {
+             if (GUI.Button(new Rect(100, Screen.height - 200, 150, 150), "ARENA TEST"))
+             {
+                 Widget.Find<ArenaTestPopup>().Show();
+             }
+         }
     }
 }

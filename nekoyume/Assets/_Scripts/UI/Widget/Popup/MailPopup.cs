@@ -448,5 +448,9 @@ namespace Nekoyume.UI
         public void Read(SellerMail sellerMail)
         {
         }
+
+        public void Read(GrindingMail grindingMail)
+        {
+        }
     }
 }
