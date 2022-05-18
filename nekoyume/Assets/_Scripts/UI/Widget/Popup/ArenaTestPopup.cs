@@ -31,7 +31,10 @@ namespace Nekoyume
         private Button close;
 
         [SerializeField]
-        private InputField inputField;
+        private InputField championshipIdInputField;
+
+        [SerializeField]
+        private InputField roundInputField;
 
         [SerializeField]
         private TextMeshProUGUI board;
@@ -45,14 +48,17 @@ namespace Nekoyume
             joinArena.onClick.AddListener(() =>
             {
                 Debug.Log("ONCLICK joinArena");
-                Game.Game.instance.ActionManager.JoinArena(costumes, equipments);
+                var championshipId = int.Parse(championshipIdInputField.text);
+                var round = int.Parse(roundInputField.text);
+                Game.Game.instance.ActionManager.JoinArena(costumes, equipments, championshipId, round);
             });
 
             getList.onClick.AddListener(() =>
             {
                 Debug.Log("ONCLICK getList");
-                var index = int.Parse(inputField.text);
-                GetList(index);
+                var championshipId = int.Parse(championshipIdInputField.text);
+                var round = int.Parse(roundInputField.text);
+                GetList(championshipId, round);
             });
 
             close.onClick.AddListener(() =>
@@ -61,14 +67,14 @@ namespace Nekoyume
             });
         }
 
-        private async void GetList(long blockIndex)
+        private async void GetList(int championshipId, int round)
         {
-            var state = await Util.GetArenaState(blockIndex);
+            var arenaParticipants = await Util.GetArenaParticipants(championshipId, round);
             var sb = new StringBuilder();
             var index = 1;
-            sb.Append($"[Arena State Address] : {state.Address}\n");
+            sb.Append($"[ArenaParticipants Address] : {arenaParticipants.Address}\n");
             sb.Append($"[my avatar address] : {States.Instance.CurrentAvatarState.address}\n");
-            foreach (var address in state.AvatarAddresses)
+            foreach (var address in arenaParticipants.AvatarAddresses)
             {
                 sb.Append($"[joined address - {index}] {address}\n");
 
@@ -84,28 +90,18 @@ namespace Nekoyume
                 }
 
                 sb.Append($"[PROFILE] " +
-                          $"name({avatarState.NameWithHash}) - " +
                           $"Level({avatarState.Level}) -" +
-                          $"CharacterId({avatarState.CharacterId}) -" +
                           $"\n");
 
-                sb.Append($"[TICKETS] " +
-                          $"Ticket({avatarState.Ticket}) -" +
-                          $"NcgTicket({avatarState.NcgTicket}) -" +
-                          $"\n");
+                var arenaScore = await Util.GetArenaScore(address, championshipId, round);
+                sb.Append($"[arenaScore Address] : {arenaScore.Address}\n");
+                sb.Append($"[SCORE] : {arenaScore.Score}\n");
 
-                sb.Append($"[LOOK] " +
-                          $"HairIndex({avatarState.HairIndex}) -" +
-                          $"LensIndex({avatarState.LensIndex}) -" +
-                          $"EarIndex({avatarState.EarIndex}) -" +
-                          $"TailIndex({avatarState.TailIndex}) -" +
-                          $"\n");
-
-                if (avatarState.Records.TryGetRecord(blockIndex, out var record))
-                {
-                    sb.Append($"[RECORD] win({record.Win}) - win({record.Lose}) - score({record.Score}) \n");
-                }
-
+                var arenaInformation = await Util.GetArenaInformation(address, championshipId, round);
+                sb.Append($"[arenaInformation Address] : {arenaInformation.Address}\n");
+                sb.Append($"[WIN] : {arenaInformation.Win} - " +
+                          $"[LOSE] : {arenaInformation.Lose} - " +
+                          $"[TICKET] : {arenaInformation.Ticket}\n");
                 sb.Append("------------------------------------------------\n");
                 index++;
             }
@@ -123,13 +119,12 @@ namespace Nekoyume
 
         }
 
-
         public override void Show(bool ignoreShowAnimation = false)
         {
             base.Show(true);
             SubscribeInventory();
             board.text = string.Empty;
-            inputField.text = string.Empty;
+            championshipIdInputField.text = string.Empty;
         }
 
         private void SubscribeInventory()

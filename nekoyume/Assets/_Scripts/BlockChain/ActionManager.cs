@@ -312,11 +312,14 @@ namespace Nekoyume.BlockChain
                 .DoOnError(e => HandleException(action.Id, e));
         }
 
-        public IObservable<ActionBase.ActionEvaluation<JoinArena>> JoinArena(List<Guid> costumes, List<Guid> equipments)
+        public IObservable<ActionBase.ActionEvaluation<JoinArena>> JoinArena(List<Guid> costumes, List<Guid> equipments,
+            int championshipId, int round)
         {
             var avatarAddress = States.Instance.CurrentAvatarState.address;
             var action = new JoinArena
             {
+                championshipId = championshipId,
+                round = round,
                 avatarAddress = avatarAddress,
                 costumes = costumes,
                 equipments = equipments,

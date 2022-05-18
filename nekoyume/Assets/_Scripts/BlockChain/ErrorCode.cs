@@ -158,14 +158,14 @@ namespace Nekoyume.BlockChain
                     key = "ROUND_DOES_NOT_EXIST";
                     break;
 
-                case AlreadyEnteredException _:
+                case AlreadyEnteredArenaException _:
                     code = "51";
                     key = "ALREADY_ENTERED_THE_ARENA";
                     break;
 
-                case NotEnoughWinException _:
+                case NotEnoughMedalException _:
                     code = "52";
-                    key = "NOT_ENOUGH_WIN_COUNT";
+                    key = "NOT_ENOUGH_MEDAL_COUNT";
                     break;
 
             }

@@ -10,6 +10,7 @@ using Libplanet;
 using Nekoyume.Extensions;
 using Nekoyume.Game.Character;
 using Nekoyume.Game.Factory;
+using Nekoyume.Model.Arena;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.State;
@@ -339,15 +340,15 @@ namespace Nekoyume.Helper
             return now.IsInTime(bDt, eDt);
         }
 
-        public static async Task<ArenaState> GetArenaState(long index)
+        public static async Task<ArenaParticipants> GetArenaParticipants(int championshipId, int round)
         {
-            var address = ArenaState.DeriveAddress(index);
+            var address = ArenaParticipants.DeriveAddress(championshipId, round);
             return await UniTask.Run(async () =>
             {
                 var state = await Game.Game.instance.Agent.GetStateAsync(address);
                 if (state is List list)
                 {
-                    return new ArenaState(list);
+                    return new ArenaParticipants(list);
                 }
 
                 return null;
@@ -363,6 +364,36 @@ namespace Nekoyume.Helper
                 if (state is List list)
                 {
                     return new ArenaAvatarState(list);
+                }
+
+                return null;
+            });
+        }
+
+        public static async Task<ArenaScore> GetArenaScore(Address avatarAddress, int championshipId, int round)
+        {
+            var address = ArenaScore.DeriveAddress(avatarAddress, championshipId, round);
+            return await UniTask.Run(async () =>
+            {
+                var state = await Game.Game.instance.Agent.GetStateAsync(address);
+                if (state is List list)
+                {
+                    return new ArenaScore(list);
+                }
+
+                return null;
+            });
+        }
+
+        public static async Task<ArenaInformation> GetArenaInformation(Address avatarAddress, int championshipId, int round)
+        {
+            var address = ArenaInformation.DeriveAddress(avatarAddress, championshipId, round);
+            return await UniTask.Run(async () =>
+            {
+                var state = await Game.Game.instance.Agent.GetStateAsync(address);
+                if (state is List list)
+                {
+                    return new ArenaInformation(list);
                 }
 
                 return null;
