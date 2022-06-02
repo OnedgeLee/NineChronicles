@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Bencodex.Types;
 using Lib9c.Model.Order;
 using Lib9c.Renderer;
@@ -318,6 +319,15 @@ namespace Nekoyume.BlockChain
                 .Where(ValidateEvaluationForCurrentAgent)
                 .ObserveOnMainThread()
                 .Subscribe(ResponseJoinArena)
+                .AddTo(_disposables);
+        }
+
+        private void BattleArena()
+        {
+            _actionRenderer.EveryRender<BattleArena>()
+                .Where(ValidateEvaluationForCurrentAgent)
+                .ObserveOnMainThread()
+                .Subscribe(ResponseBattleArena)
                 .AddTo(_disposables);
         }
 
@@ -957,6 +967,91 @@ namespace Nekoyume.BlockChain
             {
                 Game.Game.BackToMain(false, eval.Exception.InnerException).Forget();
             }
+        }
+
+        private void ResponseBattleArena(ActionBase.ActionEvaluation<BattleArena> eval)
+        {
+            if (eval.Exception is null)
+            {
+                Debug.Log("ResponseBattleArena");
+                GetPreResult(eval);
+            }
+            else
+            {
+                Game.Game.BackToMain(false, eval.Exception.InnerException).Forget();
+            }
+        }
+
+        private void GetPreResult(ActionBase.ActionEvaluation<BattleArena> eval)
+        {
+            var sb = new StringBuilder();
+
+            var my = eval.Action.myAvatarAddress;
+            var enemy = eval.Action.enemyAvatarAddress;
+            var myAddress = ArenaAvatarState.DeriveAddress(my);
+            var myAvatarState = eval.PreviousStates.GetAvatarStateV2(my);
+            var myArenaAvatarState = eval.PreviousStates.GetArenaAvatarState(myAddress, myAvatarState);
+            Debug.Log($"-------------------------------- GetPreResult --------------------\n");
+            Debug.Log($"[ADDRESS] : {my} -----------------------\n");
+            foreach (var guid in myArenaAvatarState.Costumes)
+            {
+                sb.Append($"[COSTUMES] {guid}\n");
+            }
+
+            foreach (var guid in myArenaAvatarState.Equipments)
+            {
+                sb.Append($"[EQUIPMENTS] {guid}\n");
+            }
+
+            var enemyAddress = ArenaAvatarState.DeriveAddress(enemy);
+            var enemyAvatarState = eval.PreviousStates.GetAvatarStateV2(enemy);
+            var enemyArenaAvatarState = eval.PreviousStates.GetArenaAvatarState(enemyAddress, enemyAvatarState);
+
+            Debug.Log($"[ADDRESS] : {enemy} -----------------------\n");
+            foreach (var guid in enemyArenaAvatarState.Costumes)
+            {
+                sb.Append($"[COSTUMES] {guid}\n");
+            }
+
+            foreach (var guid in enemyArenaAvatarState.Equipments)
+            {
+                sb.Append($"[EQUIPMENTS] {guid}\n");
+            }
+
+            Debug.Log(sb.ToString());
+
+            GetResult(my, enemy);
+        }
+
+        private async void GetResult(Address my, Address enemy)
+        {
+            var sb = new StringBuilder();
+            var myAvatarState = await Util.GetArenaAvatarState(my);
+            Debug.Log($"-------------------------------- GetResult --------------------\n");
+            Debug.Log($"[ADDRESS] : {my} -----------------------\n");
+            foreach (var guid in myAvatarState.Costumes)
+            {
+                sb.Append($"[COSTUMES] {guid}\n");
+            }
+
+            foreach (var guid in myAvatarState.Equipments)
+            {
+                sb.Append($"[EQUIPMENTS] {guid}\n");
+            }
+
+            var enemyAvatarState = await Util.GetArenaAvatarState(enemy);
+            Debug.Log($"[ADDRESS] : {enemy} -----------------------\n");
+            foreach (var guid in enemyAvatarState.Costumes)
+            {
+                sb.Append($"[COSTUMES] {guid}\n");
+            }
+
+            foreach (var guid in enemyAvatarState.Equipments)
+            {
+                sb.Append($"[EQUIPMENTS] {guid}\n");
+            }
+
+            Debug.Log(sb.ToString());
         }
 
         private void ResponseMimisbrunnr(ActionBase.ActionEvaluation<MimisbrunnrBattle> eval)

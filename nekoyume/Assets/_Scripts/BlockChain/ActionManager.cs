@@ -346,6 +346,44 @@ namespace Nekoyume.BlockChain
                 });
         }
 
+        public IObservable<ActionBase.ActionEvaluation<BattleArena>> BattleArena(
+            Address myAvatarAddress,
+            Address enemyAvatarAddress,
+            List<Guid> costumes, List<Guid> equipments,
+            int championshipId, int round)
+        {
+            var avatarAddress = States.Instance.CurrentAvatarState.address;
+            var action = new BattleArena
+            {
+                myAvatarAddress = myAvatarAddress,
+                enemyAvatarAddress = enemyAvatarAddress,
+                championshipId = championshipId,
+                round = round,
+                costumes = costumes,
+                equipments = equipments,
+                ticket = 1,
+            };
+
+            ProcessAction(action);
+            _lastBattleActionId = action.Id;
+            return _agent.ActionRenderer.EveryRender<BattleArena>()
+                .SkipWhile(eval => !eval.Action.Id.Equals(action.Id))
+                .First()
+                .ObserveOnMainThread()
+                .Timeout(ActionTimeout)
+                .DoOnError(e =>
+                {
+                    try
+                    {
+                        HandleException(action.Id, e);
+                    }
+                    catch (Exception e2)
+                    {
+                        Game.Game.BackToMain(false, e2).Forget();
+                    }
+                });
+        }
+
         public IObservable<ActionBase.ActionEvaluation<HackAndSlashSweep>> HackAndSlashSweep(
             List<Guid> costumes,
             List<Guid> equipments,

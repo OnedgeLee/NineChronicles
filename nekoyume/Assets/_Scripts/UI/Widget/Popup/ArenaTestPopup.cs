@@ -12,6 +12,7 @@ using Nekoyume.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Bencodex.Types;
+using Libplanet;
 using Nekoyume.Helper;
 using TMPro;
 
@@ -23,6 +24,9 @@ namespace Nekoyume
     {
         [SerializeField]
         private Button joinArena;
+
+        [SerializeField]
+        private Button battleArena;
 
         [SerializeField]
         private Button getList;
@@ -43,6 +47,8 @@ namespace Nekoyume
         private readonly List<Guid> costumes = new List<Guid>();
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
+        private List<Address> users = new List<Address>();
+
         private void Start()
         {
             joinArena.onClick.AddListener(() =>
@@ -59,6 +65,23 @@ namespace Nekoyume
                 var championshipId = int.Parse(championshipIdInputField.text);
                 var round = int.Parse(roundInputField.text);
                 GetList(championshipId, round);
+            });
+
+            battleArena.onClick.AddListener(() =>
+            {
+                Debug.Log("ONCLICK joinArena");
+                var championshipId = int.Parse(championshipIdInputField.text);
+                var round = int.Parse(roundInputField.text);
+
+                var f = States.Instance.CurrentAvatarState.inventory.Equipments.First();
+
+                var my = users.FirstOrDefault();
+                var enemy = users.LastOrDefault();
+                Game.Game.instance.ActionManager.BattleArena(
+                    my, enemy, costumes, new List<Guid>(){f.ItemId}, championshipId, round);
+
+                Game.Game.instance.ActionManager.BattleArena(
+                    my, enemy, costumes, new List<Guid>(), championshipId, round);
             });
 
             close.onClick.AddListener(() =>
@@ -108,6 +131,9 @@ namespace Nekoyume
 
             board.text = sb.ToString();
             StartCoroutine(OffOn());
+
+            users.Clear();
+            users.AddRange(arenaParticipants.AvatarAddresses);
         }
 
         private IEnumerator OffOn()
