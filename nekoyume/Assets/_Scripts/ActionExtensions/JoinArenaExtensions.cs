@@ -7,12 +7,13 @@ namespace Nekoyume.ActionExtensions
 {
     public static class JoinArenaExtensions
     {
-        public static void PayCost(this JoinArena action,
+        public static void PayCost(
+            this JoinArena action,
             IAgent agent,
             States states,
             TableSheets tableSheets)
         {
-            return;
+            // ignore.
         }
     }
 }

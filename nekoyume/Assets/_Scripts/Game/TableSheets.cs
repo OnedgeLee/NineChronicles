@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Crystal;
 
 namespace Nekoyume.Game
 {
@@ -135,9 +136,18 @@ namespace Nekoyume.Game
         public MonsterCollectionSheet MonsterCollectionSheet { get; private set; }
 
         public MonsterCollectionRewardSheet MonsterCollectionRewardSheet { get; private set; }
+
+        public CrystalEquipmentGrindingSheet CrystalEquipmentGrindingSheet { get; private set; }
+
+        public CrystalMonsterCollectionMultiplierSheet CrystalMonsterCollectionMultiplierSheet { get; private set; }
+
+        public CrystalMaterialCostSheet CrystalMaterialCostSheet { get; private set; }
+
         public SweepRequiredCPSheet SweepRequiredCPSheet { get; private set; }
 
         public ArenaSheet ArenaSheet { get; private set; }
+
+        public StakeRegularRewardSheet StakeRegularRewardSheet { get; private set; }
 
         public void ItemSheetInitialize()
         {
