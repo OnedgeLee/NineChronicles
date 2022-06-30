@@ -220,8 +220,6 @@ namespace Nekoyume.BlockChain
                 host: host,
                 listenPort: port,
                 iceServers: iceServers,
-                nodeId: 0,
-                consensusPrivateKey: new PrivateKey(),
                 differentAppProtocolVersionEncountered: DifferentAppProtocolVersionEncountered,
                 trustedAppProtocolVersionSigners: trustedAppProtocolVersionSigners);
 
